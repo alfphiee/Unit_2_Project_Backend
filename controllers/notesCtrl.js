@@ -1,19 +1,20 @@
-import User from '../models/User.js'
+import Note from '../models/Note.js'
 
 const getAll = async(req, res) => {
-    const users = await User.find({})
-    res.json(users)
+    const notes = await Note.find({"sessionId": req.params.sessionId})
+    res.json(notes)
 }
 
 const getOne = async(req, res) => {
-    const user = await User.findById(req.params.id)
-    res.json(user)
+    const note = await Note.findById(req.params.noteId)
+    res.json(note)
 }
 
 const create = (req, res) => {
-    const userData = req.body
-    const user = new User(userData)
-    user.save()
+    const noteData = req.body
+    req.body.sessionId = req.params.sessionId
+    const note = new Note(noteData)
+    note.save()
     .then(() => res.sendStatus(200))
     .catch((err) => {
         res.sendStatus(500)
@@ -22,7 +23,7 @@ const create = (req, res) => {
 }
 
 const update = (req, res) => {
-    User.updateOne({"_id": req.params.id}, req.body)
+    Note.updateOne({"_id": req.params.noteId}, req.body)
     .then((result) => res.status(200).json(result))
     .catch((err) => {
         res.sendStatus(500)
@@ -31,7 +32,7 @@ const update = (req, res) => {
 }
 
 const deleteOne = (req, res) => {
-    User.deleteOne({"_id": req.params.id})
+    Note.deleteOne({"_id": req.params.noteId})
     .then(() => res.sendStatus(200))
     .catch((err) => {
         res.sendStatus(500)
@@ -39,7 +40,7 @@ const deleteOne = (req, res) => {
     })
 }
 
-const usersCtrl = {
+const notesCtrl = {
     getAll,
     getOne,
     create,
@@ -47,4 +48,4 @@ const usersCtrl = {
     delete: deleteOne
 }
 
-export default usersCtrl
+export default notesCtrl
