@@ -16,11 +16,11 @@ const create = async (req, res) => {
         if(!user) {
             user = new User(req.body)
             await user.save()
-            res.status(201).json({id: user._id})
+            res.sendStatus(201)
         } else {
             const now = new Date()
             user = await User.findOneAndUpdate({email: req.body.email}, {lastLogin: now}, {new: true})
-            res.status(200).json({id: user._id}) 
+            res.sendStatus(200)
         }
     } catch (err) {
         console.error(err)
