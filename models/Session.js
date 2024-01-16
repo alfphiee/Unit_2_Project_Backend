@@ -29,6 +29,11 @@ const sessionSchema = new mongoose.Schema({
     notes: {
         type: String,
         required: false
+    },
+    status: {
+        type: String,
+        required: true,
+        enum: ['pending', 'confirmed', 'cancelled']
     }
 })
 

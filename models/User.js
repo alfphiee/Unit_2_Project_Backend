@@ -28,6 +28,10 @@ const userSchema = new mongoose.Schema({
         unique: true,
         trim: true
     },
+    lastLogin: {
+        type: Date,
+        required: true
+    },
     role: {
         type: String,
         required: true,

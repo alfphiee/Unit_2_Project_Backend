@@ -10,15 +10,22 @@ const getOne = async(req, res) => {
     res.json(user)
 }
 
-const create = (req, res) => {
-    const userData = req.body
-    const user = new User(userData)
-    user.save()
-    .then(() => res.sendStatus(200))
-    .catch((err) => {
-        res.sendStatus(500)
+const create = async (req, res) => {
+    try {
+        let user = await User.findOne({email: req.body.email})
+        if(!user) {
+            user = new User(req.body)
+            await user.save()
+            res.status(201).json({id: user._id})
+        } else {
+            const now = new Date()
+            user = await User.findOneAndUpdate({email: req.body.email}, {lastLogin: now}, {new: true})
+            res.status(200).json({id: user._id}) 
+        }
+    } catch (err) {
         console.error(err)
-    })
+        res.status(500).send("An error occured while processing this request")
+    }
 }
 
 const update = (req, res) => {
