@@ -1,16 +1,15 @@
 import 'dotenv/config'
-import express from 'express'
+import express, { Router } from 'express'
 import cors from 'cors'
 import bodyParser from 'body-parser'
 import mongoose from 'mongoose'
-import serverless from 'severless-http'
+import serverless from 'serverless-http'
 
 import userRouter from '../../routes/users.js'
 import User from '../../models/User.js'
 
 
 const api = express()
-const port = process.env.PORT
 
 mongoose.connect(process.env.DATABASE_URL)
 
@@ -22,8 +21,11 @@ api.get('/', (req, res) => {
     res.sendStatus(200)
 })
 
-api.use('/users', userRouter)
-api.get('/get-user-id', async (req, res) => {
+const router = Router()
+
+
+router.use('/users', userRouter)
+router.get('/get-user-id', async (req, res) => {
     try {
         const email = req.query.email
         if(!email) {
@@ -39,6 +41,6 @@ api.get('/get-user-id', async (req, res) => {
     }
 })
 
-api.listen(port, () => {
-    console.log(`listening on port: ${port}`)
-})
+api.use('/api/', router)
+
+export const handler = serverless(api)
