@@ -4,7 +4,7 @@ import Athlete from '../models/Athlete.js'
 const getAll = async(req, res) => {
     let query = {coachId: req.params.id}
     if(req.query.status) query.status = req.query.status
-    const sessions = await Session.find(query).sort({date: 1})
+    const sessions = await Session.find(query).sort({date: 1}).populate('athleteId')
     res.json(sessions)
 }
 
@@ -54,12 +54,28 @@ const deleteOne = (req, res) => {
     })
 }
 
+const getAthleteSessionsForCoach = async (req, res) => {
+    try {
+        const {id, athleteId} = req.params
+        const sessions = await Session.find({
+            coachId: id,
+            athleteId: athleteId
+        }).sort({date: -1})
+
+        res.json(sessions)
+    } catch (err) {
+        console.error(err)
+        res.status(500).send('Server Error')
+    }
+}
+
 const sessionsCtrl = {
     getAll,
     getOne,
     create,
     update,
-    delete: deleteOne
+    delete: deleteOne,
+    getAthleteSessionsForCoach
 }
 
 export default sessionsCtrl
