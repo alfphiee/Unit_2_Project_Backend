@@ -6,8 +6,9 @@ const sessionSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
-    athleteContact: {
-        type: String,
+    athleteId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Athlete',
         required: true
     },
     date: {
@@ -33,7 +34,7 @@ const sessionSchema = new mongoose.Schema({
     status: {
         type: String,
         required: true,
-        enum: ['pending', 'confirmed', 'cancelled']
+        enum: ['pending', 'confirmed', 'completed', 'cancelled']
     }
 })
 

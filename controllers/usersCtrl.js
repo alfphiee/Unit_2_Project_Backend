@@ -1,4 +1,6 @@
 import User from '../models/User.js'
+import Session from '../models/Session.js'
+import Athlete from '../models/Athlete.js'
 
 const getAll = async(req, res) => {
     const users = await User.find({})
@@ -46,12 +48,25 @@ const deleteOne = (req, res) => {
     })
 }
 
+const getRelatedAthletes = async (req, res) => {
+    try {
+        const sessions = await Session.find({coachId: req.params.id})
+        const athleteIds = [...new Set(sessions.map(session => session.athleteId.toString()))]
+        const athletes = await Athlete.find({'_id': { $in: athleteIds }})
+        res.json(athletes)
+    } catch(err) {
+        console.error(err)
+        res.status(500).send('Server Error')
+    }
+}
+
 const usersCtrl = {
     getAll,
     getOne,
     create,
     update,
-    delete: deleteOne
+    delete: deleteOne,
+    getRelatedAthletes
 }
 
 export default usersCtrl

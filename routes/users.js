@@ -11,10 +11,14 @@ router.get('/', usersCtrl.getAll)
 
 router.get('/:id', usersCtrl.getOne)
 
+router.get('/:id/athletes', usersCtrl.getRelatedAthletes)
+
 router.post('/', usersCtrl.create)
 
 router.put('/:id', usersCtrl.update)
 
 router.delete('/:id', usersCtrl.delete)
+
+
 
 export default router

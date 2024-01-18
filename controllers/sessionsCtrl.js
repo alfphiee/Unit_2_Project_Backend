@@ -1,7 +1,10 @@
 import Session from '../models/Session.js'
+import Athlete from '../models/Athlete.js'
 
 const getAll = async(req, res) => {
-    const sessions = await Session.find({"coachId": req.params.id})
+    let query = {coachId: req.params.id}
+    if(req.query.status) query.status = req.query.status
+    const sessions = await Session.find(query).sort({date: 1})
     res.json(sessions)
 }
 
@@ -10,16 +13,26 @@ const getOne = async(req, res) => {
     res.json(session)
 }
 
-const create = (req, res) => {
-    const sessionData = req.body
-    req.body.coachId = req.params.id
-    const session = new Session(sessionData)
-    session.save()
-    .then(() => res.sendStatus(200))
-    .catch((err) => {
-        res.sendStatus(500)
-        console.error(err)
-    })
+const create = async (req, res) => {
+    const {coachId, athleteContact, ...sessionData} = req.body
+    try {
+        let athlete = await Athlete.findOne({email: athleteContact})
+        if(!athlete) {
+            athlete = new Athlete({email: athleteContact })
+            await athlete.save()
+        }
+
+        const session = new Session({
+            coachId,
+            athleteId: athlete._id,
+            ...sessionData
+        })
+        await session.save()
+        res.status(201).json(session)
+    } catch(err) {
+        //console.error(err)
+        res.status(500).send("An error occured while creating the session")
+    }
 }
 
 const update = (req, res) => {
@@ -30,6 +43,7 @@ const update = (req, res) => {
         console.error(err)
     })
 }
+
 
 const deleteOne = (req, res) => {
     Session.deleteOne({"_id": req.params.sessionId})
