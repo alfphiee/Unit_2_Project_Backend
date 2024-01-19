@@ -16,6 +16,8 @@ const create = async (req, res) => {
     try {
         let user = await User.findOne({email: req.body.email})
         if(!user) {
+            const now = new Date()
+            req.body.lastLogin = now
             user = new User(req.body)
             await user.save()
             res.sendStatus(201)

@@ -60,7 +60,7 @@ const getAthleteSessionsForCoach = async (req, res) => {
         const sessions = await Session.find({
             coachId: id,
             athleteId: athleteId
-        }).sort({date: -1})
+        }).sort({date: -1}).populate('athleteId')
 
         res.json(sessions)
     } catch (err) {

@@ -32,11 +32,6 @@ const userSchema = new mongoose.Schema({
         type: Date,
         required: true
     },
-    role: {
-        type: String,
-        required: true,
-        enum: ['coach', 'athelete']
-    },
     profileInfo : profileInfoSchema
 })
 
